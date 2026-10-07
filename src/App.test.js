@@ -1,12 +1,16 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import App from './App';
 
-test('renders all three exercise demos', () => {
+test('renders all exercise demos and the animal cards', () => {
   render(<App />);
 
   expect(screen.getByRole('heading', { name: 'Event Handling Demo' })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: 'Render and Commit Demo' })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: 'State as a Snapshot Demo' })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'PropTypes Demo' })).toBeInTheDocument();
+  expect(screen.getByText('Lion')).toBeInTheDocument();
+  expect(screen.getByText('Gorilla')).toBeInTheDocument();
+  expect(screen.getByText('Zebra')).toBeInTheDocument();
 });
 
 test('increments the event handling count', () => {
@@ -35,4 +39,14 @@ test('takes and restores a count snapshot', () => {
   fireEvent.click(within(demo).getByRole('button', { name: 'Restore Snapshot' }));
 
   expect(within(demo).getByText('Count: 1')).toBeInTheDocument();
+});
+
+test('uses the default additional data when an animal has no additional object', () => {
+  const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+  render(<App />);
+
+  fireEvent.click(screen.getAllByRole('button', { name: 'More Info' })[0]);
+
+  expect(alertSpy).toHaveBeenCalledWith('notes: No Additional Information');
+  alertSpy.mockRestore();
 });
